@@ -135,7 +135,6 @@ class NeumorphismEffect(QGraphicsEffect):
         self._radial.setStops(shadowSideStops)
         bottomRight = self._getCornerPixmap(r.translated(-distance, -distance), self._radial)
 
-        # rotate the images according to the actual light source
         images = topLeft, topRight, bottomRight, bottomLeft
         shift = self._cornerShift.index(self._origin)
         if shift:
@@ -143,7 +142,6 @@ class NeumorphismEffect(QGraphicsEffect):
             for img in images:
                 img.swap(img.transformed(transform, Qt.SmoothTransformation))
 
-        # and reorder them if required
         self.topLeft, self.topRight, self.bottomRight, self.bottomLeft = images[-shift:] + images[:-shift]
 
     def origin(self):
@@ -164,7 +162,6 @@ class NeumorphismEffect(QGraphicsEffect):
         gradients = self._leftGradient, self._topGradient, self._rightGradient, self._bottomGradient
         stops = self.lightSideStops, self.lightSideStops, self.shadowSideStops, self.shadowSideStops
 
-        # assign color stops to gradients based on the light source position
         shift = self._cornerShift.index(self._origin)
         for grad, stops in zip(gradients, stops[-shift:] + stops[:-shift]):
             grad.setStops(stops)

@@ -1,8 +1,5 @@
 import sys
-if sys.platform == 'win32':
-    import win32gui
-    import win32con
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 info = """
 Resizable = False
@@ -14,13 +11,10 @@ TitleBar = True
 """
 
 
-# a "fake" button class that we need for hover and click events
 class HiddenButton(QtWidgets.QPushButton):
-    hover = QtCore.pyqtSignal()
+    hover = QtCore.Signal()
     def __init__(self, parent):
         super(HiddenButton, self).__init__(parent)
-        # prevent any painting to keep this button "invisible" while
-        # still reacting to its events
         self.setUpdatesEnabled(False)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
 
@@ -45,15 +39,11 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(SpecialTitleWindow, self).__init__()
         self.widgetHelpers = []
-#        uic.loadUi('titlebar.ui', self)
-        # enable the system menu
         self.setWindowFlags(
             QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint
         )
-        # set the WindowActive to ensure that the title bar is painted as active
         self.setWindowState(self.windowState() | QtCore.Qt.WindowActive)
 
-        # create a StyleOption that we need for painting and computing sizes
         self.titleOpt = QtWidgets.QStyleOptionTitleBar()
         self.titleOpt.initFrom(self)
         self.titleOpt.titleBarFlags = (
@@ -64,10 +54,9 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
             )
         self.titleOpt.state |= (QtWidgets.QStyle.State_Active |
             QtWidgets.QStyle.State_HasFocus)
-        self.titleOpt.titleBarState = (int(self.windowState()) |
-            int(QtWidgets.QStyle.State_Active))
+        # self.titleOpt.titleBarState = (int(self.windowState()) |
+            # int(QtWidgets.QStyle.State_Active))
 
-        # create "fake" buttons
         self.systemButton = HiddenButton(self)
         self.systemButton.pressed.connect(self.showSystemMenu)
         self.minimizeButton = HiddenButton(self)
@@ -91,7 +80,6 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
 
         self.resetTitleHeight()
 
-        # *** END OF SETUP ***
 
         fileMenu = self.menuBar().addMenu('File')
         fileMenu.addAction('Open')
@@ -101,15 +89,11 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
         analysisMenu = self.menuBar().addMenu('Analysis')
         analysisMenu.addAction('Analize action')
 
-        # just call the statusBar to create one, we use it for resizing purposes
         self.statusBar()
 
     def resetTitleHeight(self):
-        # minimum height for the menu can change everytime an action is added,
-        # removed or modified; let's update it accordingly
         if not self.titleOpt:
             return
-        # set the minimum height of the titlebar
         self.titleHeight = max(
             self.style().pixelMetric(
                 QtWidgets.QStyle.PM_TitleBarHeight, self.titleOpt, self),
@@ -123,53 +107,36 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
     def checkHoverStates(self):
         if not self.titleOpt:
             return
-        # update the window buttons when hovering
         pos = self.mapFromGlobal(QtGui.QCursor.pos())
         for ctrl, btn in self.ctrlButtons.items():
             rect = self.style().subControlRect(QtWidgets.QStyle.CC_TitleBar,
                 self.titleOpt, ctrl, self)
-            # since the maximize button can become a "restore", ensure that it
-            # actually exists according to the current state, if the rect
-            # has an actual size
             if rect and pos in rect:
                 self.titleOpt.activeSubControls = ctrl
                 self.titleOpt.state |= QtWidgets.QStyle.State_MouseOver
                 break
         else:
-            # no hover
             self.titleOpt.state &= ~QtWidgets.QStyle.State_MouseOver
             self.titleOpt.activeSubControls = QtWidgets.QStyle.SC_None
         self.titleOpt.state |= QtWidgets.QStyle.State_Active
         self.update()
 
     def showSystemMenu(self, pos=None):
-        # show the system menu on windows
-        if sys.platform != 'win32':
-            return
         if self.__sysMenuLock:
             self.__sysMenuLock = False
             return
-        winId = int(self.effectiveWinId())
-        sysMenu = win32gui.GetSystemMenu(winId, False)
         if pos is None:
             pos = self.systemButton.mapToGlobal(self.systemButton.rect().bottomLeft())
             self.__sysMenuLock = True
-        cmd = win32gui.TrackPopupMenu(sysMenu,
-            win32gui.TPM_LEFTALIGN | win32gui.TPM_TOPALIGN | win32gui.TPM_RETURNCMD,
-            pos.x(), pos.y(), 0, winId, None)
-        win32gui.PostMessage(winId, win32con.WM_SYSCOMMAND, cmd, 0)
-        # restore the menu lock to hide it when clicking the system menu icon
         QtCore.QTimer.singleShot(0, lambda: setattr(self, '__sysMenuLock', False))
 
     def actualWindowTitle(self):
-        # window title can show "*" for modified windows
         title = self.windowTitle()
         if title:
             title = title.replace('[*]', '*' if self.isWindowModified() else '')
         return title
 
     def updateTitleBar(self):
-        # compute again sizes when resizing or changing window title
         menuWidth = self.menuBar().sizeHint().width()
         availableRect = self.style().subControlRect(QtWidgets.QStyle.CC_TitleBar,
             self.titleOpt, QtWidgets.QStyle.SC_TitleBarLabel, self)
@@ -183,24 +150,15 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
         title = self.actualWindowTitle()
         titleWidth = self.fontMetrics().width(title)
         if not title and menuWidth > availableRect.width():
-            # resize the menubar to its maximum, but without hiding the buttons
             width = availableRect.width()
         elif menuWidth + titleWidth > availableRect.width():
-            # if the menubar and title require more than the available space,
-            # divide it equally, giving precedence to the window title space,
-            # since it is also necessary for window movement
             width = availableRect.width() // 2
             if menuWidth > titleWidth:
                 width = max(left, min(availableRect.width() - titleWidth, width))
-            # keep a minimum size for the menu arrow
             if availableRect.width() - width < left:
                 width = left
             extButton = self.menuBar().findChild(QtWidgets.QToolButton, 'qt_menubar_ext_button')
             if self.isVisible() and extButton:
-                # if the "extButton" is visible (meaning that some item
-                # is hidden due to the menubar cannot be completely shown)
-                # resize to the last visible item + extButton, so that
-                # there's as much space available for the title
                 minWidth = extButton.width()
                 menuBar = self.menuBar()
                 spacing = self.style().pixelMetric(QtWidgets.QStyle.PM_MenuBarItemSpacing)
@@ -214,12 +172,10 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
             width = menuWidth
         self.menuBar().setGeometry(left, top, width, height)
 
-        # ensure that our internal widget are always on top
         for w in self.widgetHelpers:
             w.raise_()
         self.update()
 
-    # helper function to avoid "ugly" colors on menubar items
     def __setMenuBar(self, menuBar):
         if self.__menuBar:
             if self.__menuBar in self.widgetHelpers:
@@ -245,7 +201,6 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
         self.__setMenuBar(menuBar)
 
     def menuBar(self):
-        # QMainWindow.menuBar() returns a new blank menu bar if none exists
         if not self.__menuBar:
             self.__setMenuBar(QtWidgets.QMenuBar(self))
         return self.__menuBar
@@ -253,17 +208,12 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
     def setCentralWidget(self, widget):
         if self.centralWidget():
             self.centralWidget().removeEventFilter(self)
-        # store the top content margin, we need it later
         l, self.__topMargin, r, b = widget.getContentsMargins()
         super(SpecialTitleWindow, self).setCentralWidget(widget)
-        # since the central widget always uses all the available space and can
-        # capture mouse events, install an event filter to catch them and
-        # allow us to grab them
         widget.installEventFilter(self)
 
     def eventFilter(self, source, event):
         if source == self.centralWidget():
-            # do not propagate mouse press events to the centralWidget!
             if (event.type() == QtCore.QEvent.MouseButtonPress and
                 event.button() == QtCore.Qt.LeftButton and
                 event.y() <= self.titleHeight):
@@ -284,7 +234,6 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
         else:
             self.setWindowState(
                 self.windowState() | QtCore.Qt.WindowMaximized | QtCore.Qt.WindowActive)
-        # whenever a window is resized, its button states have to be checked again
         self.checkHoverStates()
 
     def contextMenuEvent(self, event):
@@ -299,7 +248,6 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
     def mouseMoveEvent(self, event):
         super(SpecialTitleWindow, self).mouseMoveEvent(event)
         if event.buttons() == QtCore.Qt.LeftButton and self.__titleBarMousePos:
-            # move the window
             self.move(self.pos() + event.pos() - self.__titleBarMousePos)
 
     def mouseDoubleClickEvent(self, event):
@@ -311,7 +259,6 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
         self.__titleBarMousePos = None
 
     def changeEvent(self, event):
-        # change the appearance of the titlebar according to the window state
         if event.type() == QtCore.QEvent.ActivationChange:
             if self.isActiveWindow():
                 self.titleOpt.titleBarState = (
@@ -329,20 +276,15 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
 
     def showEvent(self, event):
         if not event.spontaneous():
-            # update the titlebar as soon as it's shown, to ensure that
-            # most of the title text is visible
             self.updateTitleBar()
 
     def resizeEvent(self, event):
         super(SpecialTitleWindow, self).resizeEvent(event)
-        # update the centralWidget contents margins, adding the titlebar height
-        # to the top margin found before
         if (self.centralWidget() and
             self.centralWidget().getContentsMargins()[1] + self.__topMargin != self.titleHeight):
                 l, t, r, b = self.centralWidget().getContentsMargins()
                 self.centralWidget().setContentsMargins(
                     l, self.titleHeight + self.__topMargin, r, b)
-        # resize the width of the titlebar option, and move its buttons
         self.titleOpt.rect.setWidth(self.width())
         for ctrl, btn in self.ctrlButtons.items():
             rect = self.style().subControlRect(
@@ -370,8 +312,6 @@ class SpecialTitleWindow(QtWidgets.QMainWindow):
         title = self.actualWindowTitle()
         titleRect.setLeft(self.menuBar().geometry().right())
         if title:
-            # move left of the rectangle available for the title to the right of
-            # the menubar; if the title is bigger than the available space, elide it
             elided = self.fontMetrics().elidedText(
                 title, QtCore.Qt.ElideRight, titleRect.width() - 2)
             qp.drawText(titleRect, QtCore.Qt.AlignCenter, elided)
@@ -381,4 +321,4 @@ if __name__ == '__main__':
     w = SpecialTitleWindow()
     w.setWindowTitle('My window')
     w.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

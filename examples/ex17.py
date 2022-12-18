@@ -27,13 +27,9 @@ class Main(QMainWindow):
     def resizeEvent(self, event):
         QMainWindow.resizeEvent(self, event)
         rect = self.rect()
-        # top left grip doesn't need to be moved...
-        # top right
         self.grips[1].move(rect.right() - self.gripSize, 0)
-        # bottom right
         self.grips[2].move(
             rect.right() - self.gripSize, rect.bottom() - self.gripSize)
-        # bottom left
         self.grips[3].move(0, rect.bottom() - self.gripSize)
 
 class SideGrip(QWidget):
@@ -103,9 +99,6 @@ class Main(QMainWindow):
             SideGrip(self, Qt.RightEdge),
             SideGrip(self, Qt.BottomEdge),
         ]
-        # corner grips should be "on top" of everything, otherwise the side grips
-        # will take precedence on mouse events, so we are adding them *after*;
-        # alternatively, widget.raise_() can be used
         self.cornerGrips = [QSizeGrip(self) for i in range(4)]
 
     @property
@@ -122,34 +115,25 @@ class Main(QMainWindow):
         self.setContentsMargins(*[self.gripSize] * 4)
 
         outRect = self.rect()
-        # an "inner" rect used for reference to set the geometries of size grips
         inRect = outRect.adjusted(self.gripSize, self.gripSize,
             -self.gripSize, -self.gripSize)
 
-        # top left
         self.cornerGrips[0].setGeometry(
             QRect(outRect.topLeft(), inRect.topLeft()))
-        # top right
         self.cornerGrips[1].setGeometry(
             QRect(outRect.topRight(), inRect.topRight()).normalized())
-        # bottom right
         self.cornerGrips[2].setGeometry(
             QRect(inRect.bottomRight(), outRect.bottomRight()))
-        # bottom left
         self.cornerGrips[3].setGeometry(
             QRect(outRect.bottomLeft(), inRect.bottomLeft()).normalized())
 
-        # left edge
         self.sideGrips[0].setGeometry(
             0, inRect.top(), self.gripSize, inRect.height())
-        # top edge
         self.sideGrips[1].setGeometry(
             inRect.left(), 0, inRect.width(), self.gripSize)
-        # right edge
         self.sideGrips[2].setGeometry(
             inRect.left() + inRect.width(),
             inRect.top(), self.gripSize, inRect.height())
-        # bottom edge
         self.sideGrips[3].setGeometry(
             self.gripSize, inRect.top() + inRect.height(),
             inRect.width(), self.gripSize)
@@ -158,9 +142,9 @@ class Main(QMainWindow):
         QMainWindow.resizeEvent(self, event)
         self.updateGrips()
 
-
-app = QApplication([])
-m = Main()
-m.show()
-m.resize(240, 160)
-app.exec_()
+if __name__ == "__main__":
+    app = QApplication([])
+    m = Main()
+    m.show()
+    m.resize(240, 160)
+    app.exec()

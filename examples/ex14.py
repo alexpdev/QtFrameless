@@ -1,9 +1,9 @@
 import sys
-from PyQt5.QtCore import pyqtSlot, QPoint, Qt, QRect
-from PyQt5.QtWidgets import (QMainWindow, QApplication, QPushButton, QHBoxLayout,
-                             QVBoxLayout, QTabWidget, QWidget, QAction,
-                             QLabel, QSizeGrip, QMenuBar, qApp)
-from PyQt5.QtGui import QIcon
+from PySide6.QtCore import QPoint, Qt, QRect
+from PySide6.QtWidgets import (QMainWindow, QApplication, QPushButton, QHBoxLayout,
+                             QVBoxLayout, QTabWidget, QWidget,
+                             QLabel, QMenuBar)
+from PySide6.QtGui import QIcon
 
 
 info = """
@@ -35,7 +35,7 @@ class TitleBar(QWidget):
         self.menu_file_save=self.menu_file.addAction('save')
         self.menu_file_saveas=self.menu_file.addAction('save as...')
         self.menu_file_quit=self.menu_file.addAction('exit')
-        self.menu_file_quit.triggered.connect(qApp.quit)
+        self.menu_file_quit.triggered.connect(self.quit)
 
         self.menu_work=self.menu_bar.addMenu('work')
         self.menu_analysis=self.menu_bar.addMenu('analysis')
@@ -187,4 +187,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     mw = MainWindow()
     mw.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
