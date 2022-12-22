@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=40.8.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "QtFrameless"
+authors = [{name = "alexpdev", email = "alexpdev@pm.me"}]
+description = "A resizable movable frameless window for PySide6."
+license = {file = "LICENSE"}
+version = "0.0.1"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["Qt", "GUI", "Graphical-User-Interface", "Widget", "Frameless"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3 :: Only",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+]
+dependencies = ["PySide6"]

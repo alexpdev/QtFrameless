@@ -1,3 +1,3 @@
-from QtFrameless.window import execute
+from QtFrameless.window import execute, FramelessWindow
 
-__all__ = ["execute"]
+__all__ = ["execute", "FramelessWindow"]

@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+QtFrameless/__init__.py
+QtFrameless/button.py
+QtFrameless/cursor.py
+QtFrameless/style.py
+QtFrameless/titleBar.py
+QtFrameless/window.py
+QtFrameless.egg-info/PKG-INFO
+QtFrameless.egg-info/SOURCES.txt
+QtFrameless.egg-info/dependency_links.txt
+QtFrameless.egg-info/requires.txt
+QtFrameless.egg-info/top_level.txt
