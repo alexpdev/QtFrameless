@@ -18,6 +18,7 @@ A custom frameless Qt QmainWindow.
 There are a number of examples below and provided in the examples directory:
 
 `helloworld.py`
+
 ```
 class MainWindow(FramelessWindow):
     def __init__(self, parent=None):
@@ -25,9 +26,11 @@ class MainWindow(FramelessWindow):
         self.setWindowTitle("HELLO WORLD!")
 ```
 
+![helloworld](./examples/helloworld.gif)
 
 
 `texteditor.py`
+
 ```
 class MainWindow(FramelessWindow):
     def __init__(self, parent=None):
@@ -37,3 +40,5 @@ class MainWindow(FramelessWindow):
         self.setCentralWidget(self.textEdit)
         self.setStyleSheet("QTextEdit {border: 1px solid black;}")
 ```
+
+![texteditor](./examples/texteditor.gif)

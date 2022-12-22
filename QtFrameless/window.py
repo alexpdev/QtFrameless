@@ -12,7 +12,6 @@ class FramelessWindow(QMainWindow):
         """Construct new frameless Qt widget."""
         super().__init__(parent=parent)
         self.setWindowFlag(Qt.FramelessWindowHint)
-        self.setContentsMargins(1,1,1,1)
         self.setMouseTracking(True)
         self.setStyleSheet(stylesheet)
         self.setObjectName('MainWindow')
@@ -86,11 +85,9 @@ class FramelessWindow(QMainWindow):
             min_width, min_height = self.minimumSizeHint().toTuple()
             if r[2] > min_width and r[3] > min_height:
                 return self.setGeometry(*r)
-        for i in range(len(Cursor.loc)):
-            a = Cursor.loc[i]["range"](pos, geom)
-            if i not in [0,1,4] and a == True:
-                self.setCursor(Cursor.loc[i]["shape"])
-                break
+        shape = Cursor.shape(pos, geom, [0, 1, 4])
+        self.setCursor(shape)
+
 
 
 def execute():

@@ -1,13 +1,14 @@
 from PySide6.QtCore import Qt
 
 class Cursor:
+
     cs = Qt.CursorShape
     m = 7
     loc = {
         0: {
             "id": "topleft",
             "shape": cs.SizeFDiagCursor,
-            "range": lambda p, r: p.x() <= Cursor.m and p.y() <= Cursor.m
+            "range": lambda p, _: p.x() <= Cursor.m and p.y() <= Cursor.m
         },
         1: {
             "id": "topright",
@@ -30,17 +31,17 @@ class Cursor:
         4: {
             "id": "top",
             "shape": cs.SizeVerCursor,
-            "range": lambda p, r: p.y() <= Cursor.m
+            "range": lambda p, _: p.y() <= Cursor.m
         },
         5: {
             "id": "bottom",
             "shape": cs.SizeVerCursor,
-            "range": lambda p,r: p.y() >= r.height() - Cursor.m
+            "range": lambda p, r: p.y() >= r.height() - Cursor.m
         },
         6: {
             "id": "left",
             "shape": cs.SizeHorCursor,
-            "range": lambda p, r: p.x() <= Cursor.m
+            "range": lambda p, _: p.x() <= Cursor.m
         },
         7: {
             "id": "right",
@@ -50,9 +51,16 @@ class Cursor:
         8: {
             "id": "standard",
             "shape": cs.ArrowCursor,
-            "range": lambda p, r: True
+            "range": lambda _, r: True
         }
     }
+
+    @staticmethod
+    def shape(point, rect, exclusions):
+        for i in range(len(Cursor.loc)):
+            if i not in exclusions and Cursor.loc[i]["range"](point, rect):
+                return Cursor.loc[i]["shape"]
+        return Cursor.loc[8]["shape"]
 
     @staticmethod
     def resize(old, new, geom, og, direction):

@@ -5,9 +5,10 @@ from QtFrameless import FramelessWindow
 import time
 
 colors = [
-    "#fff", "#0000ff", "#e8ec35", "#1767Ff",
-    "#7d189e", "#f8306b", "#400000", "#91fa85",
-    "#222222", "#F51", "#33AF11", "#AA1111"]
+    "#fff", "#0000ff", "#e8ec35", "#7d189e",
+    "#400000", "#222222", "#F51",
+    "#33AF11", "#AA1111"
+]
 
 
 class MainWindow(FramelessWindow):
@@ -33,7 +34,7 @@ class MainWindow(FramelessWindow):
                                 border: 1px solid {lst[1]};
                                 color: {lst[2]};}}""")
             app.processEvents()
-            while time.time() - then < .2: pass
+            while time.time() - then < .25: pass
 
 if "main" in __name__:
     app = QApplication([])

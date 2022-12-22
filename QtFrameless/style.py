@@ -1,18 +1,5 @@
 
 stylesheet = """
-QWidget {
-    margin: 2px;
-    background-color: #eee;
-    color: #000;
-    padding: 2px;
-}
-QMainWindow {
-    border: 1px solid ridge;
-    background-color: #333;
-    color: #000;
-    margin: 1px;
-    padding: 1px;
-}
 *[close="true"] {
     border: 1px outset #333;
     border-radius: 9px;

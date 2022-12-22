@@ -6,8 +6,8 @@ class TitleBarButton(QPushButton):
     def __init__(self, prop, parent=None):
         """Construct the standard window control buttons."""
         super().__init__(parent=parent)
-        self.setFixedHeight(22)
-        self.setFixedWidth(22)
+        self.setFixedHeight(20)
+        self.setFixedWidth(20)
         self.setProperty(prop, "true")
         self.clicked.connect(self.window_action)
 

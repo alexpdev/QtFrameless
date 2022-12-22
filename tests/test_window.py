@@ -10,10 +10,6 @@ def app():
     return app
 
 
-
-
-
-
 def test_frameless_window(app):
     window = FramelessWindow()
     assert window.titleBar
