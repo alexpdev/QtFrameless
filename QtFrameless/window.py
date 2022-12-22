@@ -1,3 +1,4 @@
+import os
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PySide6.QtCore import Qt
 from QtFrameless.titleBar import TitleBar
@@ -11,29 +12,39 @@ class FramelessWindow(QMainWindow):
         """Construct new frameless Qt widget."""
         super().__init__(parent=parent)
         self.setWindowFlag(Qt.FramelessWindowHint)
-        self.setContentsMargins(2,2,2,2)
+        self.setContentsMargins(1,1,1,1)
         self.setMouseTracking(True)
         self.setStyleSheet(stylesheet)
-        self.resize(300,300)
         self.setObjectName('MainWindow')
-        self.central = QWidget(parent=self)
-        self.central.setMouseTracking(True)
-        self.central.mouseMoveEvent = self.mouseMoveEvent
-        self.layout = QVBoxLayout(self.central)
-        self.layout.setContentsMargins(2,2,2,2)
+        self._central = QWidget(parent=self)
+        self._central.setMouseTracking(True)
+        self._central.mouseMoveEvent = self.mouseMoveEvent
+        self._layout = QVBoxLayout(self._central)
+        self._layout.setContentsMargins(0,0,0,0)
         if titleBar is not None:
             self.titleBar = titleBar()
         else:
             self.titleBar = TitleBar(self)
-        self.layout.addWidget(self.titleBar)
-        self.layout.addStretch(1)
-        self.main = QWidget(self)
-        self.layout.addWidget(self.main)
-        super().setCentralWidget(self.central)
+        self._layout.addWidget(self.titleBar)
+        self._layout.addStretch(1)
+        self._main = QWidget(self)
+        self._layout.addWidget(self._main)
         self._direction = None
         self._cgeom = None
         self._cpos = None
         self._pressed = None
+        super().setCentralWidget(self._central)
+
+    def setStyleSheet(self, qss):
+        if not isinstance(qss, str):
+            if hasattr(qss, "read"):
+                qss = qss.read()
+            elif hasattr(qss, "readText"):
+                qss = qss.readText()
+        elif os.path.exists(qss):
+            qss = open(qss, 'tr').read()
+        qss = stylesheet + qss
+        super().setStyleSheet(qss)
 
     def setWindowTitle(self, title: str):
         self.titleBar.setWindowTitle(title)
@@ -42,10 +53,11 @@ class FramelessWindow(QMainWindow):
         self.titleBar.setWindowIcon(icon)
 
     def setCentralWidget(self, widget):
-        item = self.layout.takeAt(2)
+        item = self._layout.takeAt(2)
         item.widget().deleteLater()
-        self.layout.takeAt(1)
-        self.layout.addWidget(widget)
+        item.widget().destroy()
+        self._layout.takeAt(1)
+        self._layout.addWidget(widget)
 
     def mousePressEvent(self, event):
         pos = event.position().toPoint()
