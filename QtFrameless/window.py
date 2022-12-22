@@ -1,11 +1,8 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PySide6.QtCore import Qt
-
 from QtFrameless.titleBar import TitleBar
 from QtFrameless.style import stylesheet
 from QtFrameless.cursor import Cursor
-
-
 
 class FramelessWindow(QMainWindow):
     """A frameless MainWindow widget."""
@@ -32,11 +29,23 @@ class FramelessWindow(QMainWindow):
         self.layout.addStretch(1)
         self.main = QWidget(self)
         self.layout.addWidget(self.main)
-        self.setCentralWidget(self.central)
+        super().setCentralWidget(self.central)
         self._direction = None
         self._cgeom = None
         self._cpos = None
         self._pressed = None
+
+    def setWindowTitle(self, title: str):
+        self.titleBar.setWindowTitle(title)
+
+    def setWindowIcon(self, icon: str):
+        self.titleBar.setWindowIcon(icon)
+
+    def setCentralWidget(self, widget):
+        item = self.layout.takeAt(2)
+        item.widget().deleteLater()
+        self.layout.takeAt(1)
+        self.layout.addWidget(widget)
 
     def mousePressEvent(self, event):
         pos = event.position().toPoint()

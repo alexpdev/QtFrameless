@@ -6,7 +6,6 @@ from QtFrameless.cursor import Cursor
 
 icon = os.path.join(os.path.dirname(__file__), "home.png")
 
-
 class TitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)

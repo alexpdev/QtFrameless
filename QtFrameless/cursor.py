@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt
 
 class Cursor:
     cs = Qt.CursorShape
-    m = 5
+    m = 7
     loc = {
         0: {
             "id": "topleft",

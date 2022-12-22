@@ -2,14 +2,14 @@
 stylesheet = """
 QWidget {
     margin: 2px;
-    background-color: #587;
-    color: #fff;
+    background-color: #eee;
+    color: #000;
     padding: 2px;
 }
 QMainWindow {
     border: 1px solid ridge;
     background-color: #333;
-    color: #fff;
+    color: #000;
     margin: 1px;
     padding: 1px;
 }
