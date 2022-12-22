@@ -1,35 +1,38 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PySide6.QtCore import Qt
 
-from QtFrameless.topwidget import TopBar
+from QtFrameless.titleBar import TitleBar
 from QtFrameless.style import stylesheet
 from QtFrameless.cursor import Cursor
 
 
 
-class Window(QMainWindow):
-    """Window object."""
+class FramelessWindow(QMainWindow):
+    """A frameless MainWindow widget."""
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None, titleBar=None):
+        """Construct new frameless Qt widget."""
         super().__init__(parent=parent)
-        self.layout = QVBoxLayout()
         self.setWindowFlag(Qt.FramelessWindowHint)
+        self.setContentsMargins(2,2,2,2)
+        self.setMouseTracking(True)
+        self.setStyleSheet(stylesheet)
+        self.resize(300,300)
+        self.setObjectName('MainWindow')
         self.central = QWidget(parent=self)
         self.central.setMouseTracking(True)
         self.central.mouseMoveEvent = self.mouseMoveEvent
-        self.topBar = TopBar(self)
-        self.setContentsMargins(3,3,3,3)
-        self.layout.addWidget(self.topBar)
-        self.layout.setContentsMargins(1,1,1,1)
-        self.main = QWidget(self)
-        self.resize(300,300)
-        self.setStyleSheet(stylesheet)
-        self.setMouseTracking(True)
+        self.layout = QVBoxLayout(self.central)
+        self.layout.setContentsMargins(2,2,2,2)
+        if titleBar is not None:
+            self.titleBar = titleBar()
+        else:
+            self.titleBar = TitleBar(self)
+        self.layout.addWidget(self.titleBar)
         self.layout.addStretch(1)
+        self.main = QWidget(self)
         self.layout.addWidget(self.main)
-        self.central.setLayout(self.layout)
         self.setCentralWidget(self.central)
-        self.setObjectName('MainWindow')
         self._direction = None
         self._cgeom = None
         self._cpos = None
@@ -56,8 +59,12 @@ class Window(QMainWindow):
         geom = self.geometry()
         pos = event.position().toPoint()
         if self._pressed:
+            if self._direction["id"] == "standard":
+                return
             r = Cursor.resize(self._cpos, pos, geom, self._cgeom, self._direction)
-            return self.setGeometry(*r)
+            min_width, min_height = self.minimumSizeHint().toTuple()
+            if r[2] > min_width and r[3] > min_height:
+                return self.setGeometry(*r)
         for i in range(len(Cursor.loc)):
             a = Cursor.loc[i]["range"](pos, geom)
             if i not in [0,1,4] and a == True:
@@ -67,6 +74,6 @@ class Window(QMainWindow):
 
 def execute():
     app = QApplication([])
-    window = Window()
+    window = FramelessWindow()
     window.show()
     app.exec()
