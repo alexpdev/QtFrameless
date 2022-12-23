@@ -2,20 +2,38 @@
 
 ![QtFrameless](./QtFrameless.png)
 
-------------------------
+--------------------------
 
 ## Overview
 
-A custom frameless Qt QmainWindow.
+A PySide6 Implementation of a draggable, resizable, and frameless QMainWindow widget.
+It comes with a built in title bar with standard close, maximize and minimize buttons,
+however it users can also provide their own Titlebar QWidget subclass.
 
 ## Features
 
-- Frameless
-- Custom Title Bar
-- Resizeable
-- Moveable
-- Pluggable
-- Extensible
+-   Frameless
+-   Custom Title Bar
+-   Resizeable
+-   Draggable
+-   Pluggable
+-   Extensible
+
+## Install
+
+Using PyPi
+
+```
+pip install QtFrameless
+```
+
+Using git
+
+```
+git clone https://github.com/alexpdev/QtFrameless.git
+cd QtFrameless
+pip install .
+```
 
 ## Examples
 
@@ -32,7 +50,7 @@ app.exec()
 
 ![basic.py](./examples/basic.gif)
 
-----------------------
+----------------------------
 
 Another simple `Hello World` example that uses subclassing and changes 
 the window title.
@@ -49,7 +67,7 @@ class MainWindow(FramelessWindow):
 
 ![helloworld](./examples/helloworld.gif)
 
-----------------------
+----------------------------
 
 
 Example that creates a `QTextEdit` widget as the central widget.
@@ -69,7 +87,7 @@ class MainWindow(FramelessWindow):
 
 ![texteditor](./examples/texteditor.gif)
 
---------------------
+----------------------------
 
 An example of providing a custom widget class to use as the title bar.
 
@@ -106,6 +124,12 @@ class TitleBar(QWidget):
         self.edit_menu.addActions(
             [self.copy_action, self.cut_action, self.paste_action])
         self.options_menu.addAction(self.about_action)
+
+if "main" in __name__:
+    app = QApplication([])
+    window = FramelessWindow(titleBar=TitleBar)
+    window.show()
+    app.exec()
 ```
 
 ![customtitlebar.py](./examples/customtitlebar.gif)
