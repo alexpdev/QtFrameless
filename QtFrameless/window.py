@@ -61,13 +61,10 @@ class FramelessWindow(QMainWindow):
     def mousePressEvent(self, event):
         pos = event.position().toPoint()
         rect = self.rect()
-        for i in range(len(Cursor.loc)):
-            if i not in [0, 1, 4] and Cursor.loc[i]["range"](pos, rect):
-                self._direction = Cursor.loc[i]
-                self._cgeom = self.geometry()
-                self._cpos = pos
-                self._pressed = True
-                break
+        self._direction = Cursor.match(pos, rect, [0, 4, 1])
+        self._cgeom = self.geometry()
+        self._cpos = pos
+        self._pressed = True
 
     def mouseReleaseEvent(self, _):
         self._pressed = False
@@ -78,14 +75,12 @@ class FramelessWindow(QMainWindow):
     def mouseMoveEvent(self, event):
         geom = self.geometry()
         pos = event.position().toPoint()
-        if self._pressed:
-            if self._direction["id"] == "standard":
-                return
+        if self._pressed and self._direction["id"] != "standard":
             r = Cursor.resize(self._cpos, pos, geom, self._cgeom, self._direction)
             min_width, min_height = self.minimumSizeHint().toTuple()
             if r[2] > min_width and r[3] > min_height:
                 return self.setGeometry(*r)
-        shape = Cursor.shape(pos, geom, [0, 1, 4])
+        shape = Cursor.match(pos, geom, [0, 1, 4])["shape"]
         self.setCursor(shape)
 
 

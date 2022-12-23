@@ -48,13 +48,11 @@ class TitleBar(QWidget):
     def mousePressEvent(self, event):
         pos = event.position().toPoint()
         rect = self.window().rect()
-        for i in range(len(Cursor.loc)):
-            if i not in [5,3,2] and Cursor.loc[i]["range"](pos, rect):
-                self._direction = Cursor.loc[i]
-                self._cgeom = self.window().geometry()
-                self._cpos = pos
-                self._pressed = True
-                break
+        direction = Cursor.match(pos, rect, exclusions=[5,3,2])
+        self._direction = direction
+        self._cgeom = self.window().geometry()
+        self._cpos = pos
+        self._pressed = True
 
     def mouseReleaseEvent(self, _):
         self._pressed = False
@@ -69,13 +67,10 @@ class TitleBar(QWidget):
         if self._pressed:
             r = Cursor.resize(self._cpos, pos, geom, self._cgeom, self._direction)
             min_width, min_height = window.minimumSizeHint().toTuple()
-            if r[2] > min_width and r[3] > min_height:
-                return window.setGeometry(*r)
-        for i in range(len(Cursor.loc)):
-            a = Cursor.loc[i]["range"](pos, geom)
-            if i not in [5,3,2] and a == True:
-                self.setCursor(Cursor.loc[i]["shape"])
-                break
+            if r[2] < min_width or r[3] < min_height: return
+            return window.setGeometry(*r)
+        direction = Cursor.match(pos, geom, [5,3,2])
+        self.setCursor(direction["shape"])
 
     def mouseDoubleClickEvent(self, event):
         pos = event.position().toPoint()

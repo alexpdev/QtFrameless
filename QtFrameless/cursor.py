@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt
 class Cursor:
 
     cs = Qt.CursorShape
-    m = 7
+    m = 6
     loc = {
         0: {
             "id": "topleft",
@@ -55,12 +55,13 @@ class Cursor:
         }
     }
 
-    @staticmethod
-    def shape(point, rect, exclusions):
-        for i in range(len(Cursor.loc)):
-            if i not in exclusions and Cursor.loc[i]["range"](point, rect):
-                return Cursor.loc[i]["shape"]
-        return Cursor.loc[8]["shape"]
+    @classmethod
+    def match(cls, point, rect, exclusions=None):
+        for i in range(len(cls.loc)):
+            if exclusions and i not in exclusions:
+                matched = cls.loc[i]["range"](point, rect)
+                if matched: return cls.loc[i]
+        return cls.loc[8]
 
     @staticmethod
     def resize(old, new, geom, og, direction):
