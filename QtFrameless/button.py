@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QPushButton, QApplication
+from QtFrameless.qt_api import QPushButton, QApplication
 
 class TitleBarButton(QPushButton):
     """Standard Buttons for closing and minimizing the window."""

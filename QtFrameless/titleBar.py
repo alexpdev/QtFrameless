@@ -1,6 +1,5 @@
 import os
-from PySide6.QtWidgets import QLabel, QWidget, QSizePolicy, QHBoxLayout
-from PySide6.QtGui import QPixmap
+from QtFrameless.qt_api import QLabel, QWidget, QSizePolicy, QHBoxLayout, QPixmap
 from QtFrameless.button import TitleBarButton
 from QtFrameless.cursor import Cursor
 
