@@ -1,4 +1,3 @@
-
 stylesheet = """
 *[close="true"] {
     border: 1px outset #333;

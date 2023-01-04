@@ -5,6 +5,7 @@ from QtFrameless.cursor import Cursor
 
 icon = os.path.join(os.path.dirname(__file__), "home.png")
 
+
 class TitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -17,7 +18,7 @@ class TitleBar(QWidget):
         self.setMaximumHeight(50)
         self.closeButton = TitleBarButton("close", parent=self)
         self.minimizeButton = TitleBarButton("min", parent=self)
-        self.maximizeButton = TitleBarButton("max",parent=self)
+        self.maximizeButton = TitleBarButton("max", parent=self)
         sizePolicy = QSizePolicy()
         sizePolicy.setHorizontalPolicy(QSizePolicy.Policy.Fixed)
         self.closeButton.setSizePolicy(sizePolicy)
@@ -47,7 +48,7 @@ class TitleBar(QWidget):
     def mousePressEvent(self, event):
         pos = event.position().toPoint()
         rect = self.window().rect()
-        direction = Cursor.match(pos, rect, exclusions=[5,3,2])
+        direction = Cursor.match(pos, rect, exclusions=[5, 3, 2])
         self._direction = direction
         self._cgeom = self.window().geometry()
         self._cpos = pos
@@ -66,9 +67,10 @@ class TitleBar(QWidget):
         if self._pressed:
             r = Cursor.resize(self._cpos, pos, geom, self._cgeom, self._direction)
             min_width, min_height = window.minimumSizeHint().toTuple()
-            if r[2] < min_width or r[3] < min_height: return
+            if r[2] < min_width or r[3] < min_height:
+                return
             return window.setGeometry(*r)
-        direction = Cursor.match(pos, geom, [5,3,2])
+        direction = Cursor.match(pos, geom, [5, 3, 2])
         self.setCursor(direction["shape"])
 
     def mouseDoubleClickEvent(self, event):

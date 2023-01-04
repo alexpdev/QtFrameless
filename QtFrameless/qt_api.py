@@ -1,10 +1,10 @@
 import sys
 
-if 'PyQt6' in sys.modules:
+if "PyQt6" in sys.modules:
     from PyQt6.QtWidgets import *
     from PyQt6.QtGui import *
     from PyQt6.QtCore import *
-elif 'PyQt5' in sys.modules:
+elif "PyQt5" in sys.modules:
     from PyQt5.QtWidgets import *
     from PyQt5.QtGui import *
     from PyQt5.QtCore import *
@@ -28,3 +28,5 @@ try:
     Signal = Signal
 except:
     Signal = pyqtSignal
+QObject = QObject
+QMouseEvent = QMouseEvent
