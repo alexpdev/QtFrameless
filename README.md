@@ -10,6 +10,8 @@ A PySide6 Implementation of a draggable, resizable, and frameless QMainWindow wi
 It comes with a built in title bar with standard close, maximize and minimize buttons,
 however it users can also provide their own Titlebar QWidget subclass.
 
+__This project is very young, far from stable, and filled with bugs.  _Use at your own peril.___
+
 ## Features
 
 -   Frameless
