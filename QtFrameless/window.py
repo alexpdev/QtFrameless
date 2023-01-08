@@ -5,7 +5,7 @@ from QtFrameless.qt_api import (
     QVBoxLayout,
     QWidget,
     Qt,
-    QObject,
+    QEvent,
     QMouseEvent,
 )
 from QtFrameless.titleBar import TitleBar
@@ -41,7 +41,8 @@ class FramelessWindow(QMainWindow):
         self._cgeom = None
         self._cpos = None
         self._pressed = None
-        self.installEventFilter(EventFilter(self))
+        self.statusbar = self.statusBar()
+        self.installEventFilter(self)
         super().setCentralWidget(self._central)
 
     def setTitleBar(self, titleBarClass):
@@ -103,19 +104,12 @@ class FramelessWindow(QMainWindow):
         shape = Cursor.match(pos, geom, [0, 1, 4])["shape"]
         self.setCursor(shape)
 
-
-class EventFilter(QObject):
-    def __init__(self, widget):
-        super().__init__(widget)
-        self.widget = widget
-
     def eventFilter(self, obj, event):
         if isinstance(event, QMouseEvent):
-            print(event.type())
-            print(event)
-            print(dir(event))
+            if event.type() == QEvent.MouseMove:
+                print(event)
+        return True
 
-        return event
 
 
 def execute():

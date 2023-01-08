@@ -30,3 +30,4 @@ except:
     Signal = pyqtSignal
 QObject = QObject
 QMouseEvent = QMouseEvent
+QEvent = QEvent
