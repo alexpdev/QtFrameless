@@ -26,9 +26,10 @@ class FramelessWindow(QMainWindow):
         self._layout.setContentsMargins(0, 0, 0, 0)
         if titleBarClass is not None:
             self.titleBar = titleBarClass()
-            self.titleBar.mouseMoveEvent = TitleBar.mouseMoveEvent
-            self.titleBar.mouseReleaseEvent = TitleBar.mouseReleaseEvent
-            self.titleBar.mousePressEvent = TitleBar.mousePressEvent
+            self.titleBar.mouseMoveEvent = self._titlebar_mouseMoveEvent
+            self.titleBar.mouseReleaseEvent = self._titlebar_mouseReleaseEvent
+            self.titleBar.mousePressEvent = self._titlebar_mousePressEvent
+            self.titleBar.mouseDoubleClickEvent = self._titlebar_mouseDoubleClickEvent
         else:
             self.titleBar = TitleBar(self)
         self._layout.addWidget(self.titleBar)
@@ -69,6 +70,30 @@ class FramelessWindow(QMainWindow):
         widget.setContentsMargins(2, 2, 2, 2)
         widget.mouseMoveEvent = self.mouseMoveEvent
         self._layout.addWidget(widget)
+
+    def _titlebar_mouseDoubleClickEvent(self, _):
+        if self.window().isMaximized():
+            self.window().showNormal()
+        else:
+            self.window().showMaximized()
+
+    def _titlebar_mousePressEvent(self, event):
+        self._pressed = True
+        self._cpos = event.position().toPoint()
+
+    def _titlebar_mouseMoveEvent(self, event):
+        if not self._pressed:
+            return
+        pos = event.position().toPoint()
+        difx, dify = (pos - self._cpos).toTuple()
+        geom = self.window().geometry()
+        x, y, w, h = geom.x(), geom.y(), geom.width(), geom.height()
+        new_coords = x+difx, y+dify, w, h
+        self.window().setGeometry(*new_coords)
+
+    def _titlebar_mouseReleaseEvent(self, event):
+        self._pressed = False
+        self._cpos = None
 
 
 def execute():
