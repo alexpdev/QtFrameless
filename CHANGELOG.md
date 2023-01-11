@@ -1,5 +1,11 @@
 # QtFrameless
 
+## Version 0.1.1
+
+-   Edited resizing functionality
+-   Removed custom cursor methods
+-   Set title bar methods for user provided titlebar.
+
 ---------------------------
 
 ## Version 0.1.0
