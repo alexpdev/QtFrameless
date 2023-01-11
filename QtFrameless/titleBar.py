@@ -4,6 +4,8 @@ from QtFrameless.button import TitleBarButton
 
 icon = os.path.join(os.path.dirname(__file__), "home.png")
 
+
+
 class TitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -53,7 +55,7 @@ class TitleBar(QWidget):
 
     def mouseMoveEvent(self, event):
         if not self._pressed:
-            return super().mouseMoveEvent(event)
+            return
         pos = event.position().toPoint()
         difx, dify = (pos - self._cpos).toTuple()
         geom = self.window().geometry()

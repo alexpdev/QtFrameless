@@ -6,7 +6,7 @@ from QtFrameless.qt_api import (
     QWidget,
     Qt
 )
-from QtFrameless.titleBar import TitleBar
+from QtFrameless.titleBar import TitleBar #, mouseMoveEvent, mousePressEvent, mouseReleaseEvent
 from QtFrameless.style import stylesheet
 
 
@@ -26,6 +26,9 @@ class FramelessWindow(QMainWindow):
         self._layout.setContentsMargins(0, 0, 0, 0)
         if titleBarClass is not None:
             self.titleBar = titleBarClass()
+            self.titleBar.mouseMoveEvent = TitleBar.mouseMoveEvent
+            self.titleBar.mouseReleaseEvent = TitleBar.mouseReleaseEvent
+            self.titleBar.mousePressEvent = TitleBar.mousePressEvent
         else:
             self.titleBar = TitleBar(self)
         self._layout.addWidget(self.titleBar)
