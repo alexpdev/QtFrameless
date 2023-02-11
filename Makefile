@@ -8,3 +8,8 @@ clean: ## clean useless documents
 push: clean ## upload changes to github repo
 	git add .
 	git commit -m $m
+
+
+release: clean ## release version to pypi
+	python -m build
+	twine upload dist\*
