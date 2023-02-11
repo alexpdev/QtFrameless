@@ -7,7 +7,10 @@ icon = os.path.join(os.path.dirname(__file__), "home.png")
 
 
 class TitleBar(QWidget):
+    """Custom titlebar for a frameless QMainWindow."""
+
     def __init__(self, parent=None):
+        """Construct for titlebar."""
         super().__init__(parent=parent)
         self.label = QLabel()
         self.setProperty("titleBar", "true")

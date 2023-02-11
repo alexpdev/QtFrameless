@@ -6,7 +6,7 @@ from QtFrameless.qt_api import (
     QWidget,
     Qt
 )
-from QtFrameless.titleBar import TitleBar #, mouseMoveEvent, mousePressEvent, mouseReleaseEvent
+from QtFrameless.titleBar import TitleBar
 from QtFrameless.style import stylesheet
 
 
