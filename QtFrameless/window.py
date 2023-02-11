@@ -4,13 +4,10 @@ from QtFrameless.qt_api import (
     QMainWindow,
     QVBoxLayout,
     QWidget,
-    Qt,
-    QEvent,
-    QMouseEvent,
+    Qt
 )
 from QtFrameless.titleBar import TitleBar
 from QtFrameless.style import stylesheet
-from QtFrameless.cursor import Cursor
 
 
 class FramelessWindow(QMainWindow):
@@ -25,24 +22,21 @@ class FramelessWindow(QMainWindow):
         self.setObjectName("MainWindow")
         self.setContentsMargins(4, 4, 4, 4)
         self._central = QWidget(parent=self)
-        self._central.setMouseTracking(True)
-        self._central.mouseMoveEvent = self.mouseMoveEvent
         self._layout = QVBoxLayout(self._central)
         self._layout.setContentsMargins(0, 0, 0, 0)
         if titleBarClass is not None:
             self.titleBar = titleBarClass()
+            self.titleBar.mouseMoveEvent = self._titlebar_mouseMoveEvent
+            self.titleBar.mouseReleaseEvent = self._titlebar_mouseReleaseEvent
+            self.titleBar.mousePressEvent = self._titlebar_mousePressEvent
+            self.titleBar.mouseDoubleClickEvent = self._titlebar_mouseDoubleClickEvent
         else:
             self.titleBar = TitleBar(self)
         self._layout.addWidget(self.titleBar)
         self._layout.addStretch(1)
         self._main = QWidget(self)
         self._layout.addWidget(self._main)
-        self._direction = None
-        self._cgeom = None
-        self._cpos = None
-        self._pressed = None
         self.statusbar = self.statusBar()
-        self.installEventFilter(self)
         super().setCentralWidget(self._central)
 
     def setTitleBar(self, titleBarClass):
@@ -77,39 +71,29 @@ class FramelessWindow(QMainWindow):
         widget.mouseMoveEvent = self.mouseMoveEvent
         self._layout.addWidget(widget)
 
-    def mousePressEvent(self, event):
-        pos = event.position().toPoint()
-        rect = self.rect()
-        self._direction = Cursor.match(pos, rect, [0, 4, 1])
-        if self.cursor().shape() != self._direction["shape"]:
-            self.setCursor(self._direction["shape"])
-        self._cgeom = self.geometry()
-        self._cpos = pos
-        self._pressed = True
+    def _titlebar_mouseDoubleClickEvent(self, _):
+        if self.window().isMaximized():
+            self.window().showNormal()
+        else:
+            self.window().showMaximized()
 
-    def mouseReleaseEvent(self, _):
+    def _titlebar_mousePressEvent(self, event):
+        self._pressed = True
+        self._cpos = event.position().toPoint()
+
+    def _titlebar_mouseMoveEvent(self, event):
+        if not self._pressed:
+            return
+        pos = event.position().toPoint()
+        difx, dify = (pos - self._cpos).toTuple()
+        geom = self.window().geometry()
+        x, y, w, h = geom.x(), geom.y(), geom.width(), geom.height()
+        new_coords = x+difx, y+dify, w, h
+        self.window().setGeometry(*new_coords)
+
+    def _titlebar_mouseReleaseEvent(self, event):
         self._pressed = False
         self._cpos = None
-        self._direction = None
-        self._cgeom = None
-
-    def mouseMoveEvent(self, event):
-        geom = self.geometry()
-        pos = event.position().toPoint()
-        if self._pressed and self._direction["id"] != "standard":
-            r = Cursor.resize(self._cpos, pos, geom, self._cgeom, self._direction)
-            min_width, min_height = self.minimumSizeHint().toTuple()
-            if r[2] > min_width and r[3] > min_height:
-                return self.setGeometry(*r)
-        shape = Cursor.match(pos, geom, [0, 1, 4])["shape"]
-        self.setCursor(shape)
-
-    def eventFilter(self, obj, event):
-        if isinstance(event, QMouseEvent):
-            if event.type() == QEvent.MouseMove:
-                print(event)
-        return True
-
 
 
 def execute():

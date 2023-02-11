@@ -36,6 +36,6 @@ class TitleBar(QWidget):
 
 if "main" in __name__:
     app = QApplication([])
-    window = FramelessWindow(titleBar=TitleBar)
+    window = FramelessWindow(titleBarClass=TitleBar)
     window.show()
     app.exec()
