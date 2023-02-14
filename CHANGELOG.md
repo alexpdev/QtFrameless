@@ -1,5 +1,10 @@
 # QtFrameless
 
+## Version 0.1.2
+
+-   Minor improvements to title bar and tile bar buttons.
+-   Set title bar methods for user provided titlebar.
+
 ## Version 0.1.1
 
 -   Edited resizing functionality
