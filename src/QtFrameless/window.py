@@ -20,7 +20,6 @@ class FramelessWindow(QMainWindow):
         self.setMouseTracking(True)
         self.setStyleSheet(stylesheet)
         self.setObjectName("MainWindow")
-        self.setContentsMargins(4, 4, 4, 4)
         self._central = QWidget(parent=self)
         self._layout = QVBoxLayout(self._central)
         self._layout.setContentsMargins(0, 0, 0, 0)
@@ -67,7 +66,6 @@ class FramelessWindow(QMainWindow):
         item.widget().deleteLater()
         item.widget().destroy()
         self._layout.takeAt(1)
-        widget.setContentsMargins(2, 2, 2, 2)
         widget.mouseMoveEvent = self.mouseMoveEvent
         self._layout.addWidget(widget)
 
