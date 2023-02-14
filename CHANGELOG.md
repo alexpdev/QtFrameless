@@ -1,5 +1,9 @@
 # QtFrameless
 
+## Version 0.1.4
+
+-   Fixed bug in with maximize window titlebar button.
+
 ## Version 0.1.3
 
 -   Fixed bug in pypi and github installations

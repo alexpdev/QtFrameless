@@ -49,7 +49,7 @@ class TitleBarMaxButton(TitleBarButton):
     _action = "Max"
 
     def window_action(self):
-        if self.window().isMinimized():
+        if self.window().isMaximized():
             self.window().showNormal()
         else:
-            self.window().showMinimized()
+            self.window().showMaximized()
