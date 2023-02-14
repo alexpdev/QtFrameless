@@ -1,5 +1,9 @@
 # QtFrameless
 
+## Version 0.1.3
+
+-   Fixed bug in pypi and github installations
+
 ## Version 0.1.2
 
 -   Minor improvements to title bar and tile bar buttons.

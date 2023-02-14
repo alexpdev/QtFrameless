@@ -1,0 +1,7 @@
+include CHANGELOG.md
+include Makefile
+graft examples
+graft assets
+graft tests
+include src/QtFrameless/home.png
+global-exclude *.pyc
