@@ -34,8 +34,10 @@ changelog = "https://alexpdev.github.io/QtFrameless/changelog/"
 issues = "https://github.com/alexpdev/QtFrameless/issues"
 
 [tool.setuptools]
-packages = ["QtFrameless"]
-include_package_data = true
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {}
 
 [tool.bandit]
 skips = ["B101"]
