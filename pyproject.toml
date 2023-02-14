@@ -35,6 +35,7 @@ issues = "https://github.com/alexpdev/QtFrameless/issues"
 
 [tool.setuptools]
 packages = ["QtFrameless"]
+include_package_data = true
 
 [tool.bandit]
 skips = ["B101"]
@@ -58,7 +59,7 @@ console_output_style = "progress"
 addopts = "--maxfail=3"
 
 
-[tool.pylint. 'MESSAGES CONTROL']
+[tool.pylint.'MESSAGES CONTROL']
 disable = [
     "R1729",
     "W0108",
@@ -70,7 +71,7 @@ disable = [
     "implicit-str-concat"
 ]
 
-[tool.pylint. 'VARIABLES']
+[tool.pylint.'VARIABLES']
 callbacks = ["cb_", "_cb", "hook_"]
 
 [tool.pylint. 'FORMAT']
@@ -82,7 +83,7 @@ ignore-comments = true
 ignore-docstrings=true
 ignore-imports=true
 
-[tool.pylint. 'DESIGN']
+[tool.pylint.'DESIGN']
 max-args=15
 min-public-methods=0
 max-attributes=20

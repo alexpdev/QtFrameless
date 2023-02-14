@@ -1,9 +1,8 @@
 import os
-from QtFrameless.qt_api import QLabel, QWidget, QSizePolicy, QHBoxLayout, QPixmap
-from QtFrameless.button import TitleBarButton
+from .qt_api import QLabel, QWidget, QSizePolicy, QHBoxLayout, QPixmap, Qt
+from .button import TitleBarCloseButton, TitleBarMaxButton, TitleBarMinButton
 
 icon = os.path.join(os.path.dirname(__file__), "home.png")
-
 
 
 class TitleBar(QWidget):
@@ -12,20 +11,26 @@ class TitleBar(QWidget):
     def __init__(self, parent=None):
         """Construct for titlebar."""
         super().__init__(parent=parent)
+        self.setObjectName("TitleBarWidget")
+        self.setAttribute(Qt.WA_StyledBackground, True)
         self.label = QLabel()
-        self.setProperty("titleBar", "true")
-        pix = QPixmap(icon)
-        self.icon = QLabel()
-        self.icon.setPixmap(pix)
         self.label.setText("TitleBar")
-        self.setMaximumHeight(50)
-        self.closeButton = TitleBarButton("close", parent=self)
-        self.minimizeButton = TitleBarButton("min", parent=self)
-        self.maximizeButton = TitleBarButton("max", parent=self)
+        self.setMaximumHeight(40)
+        self.closeButton = TitleBarCloseButton(parent=self)
+        self.minimizeButton = TitleBarMinButton(parent=self)
+        self.maximizeButton = TitleBarMaxButton(parent=self)
         sizePolicy = QSizePolicy()
         sizePolicy.setHorizontalPolicy(QSizePolicy.Policy.Fixed)
         self.closeButton.setSizePolicy(sizePolicy)
         self.layout = QHBoxLayout(self)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        if os.path.exists(icon):
+            pix = QPixmap(icon)
+        else:
+            pix = QPixmap(25,25)
+        self.icon = QLabel()
+        self.icon.setPixmap(pix)
         self.layout.addWidget(self.icon)
         self.layout.addStretch(1)
         self.layout.addWidget(self.label)
@@ -69,3 +74,8 @@ class TitleBar(QWidget):
     def mouseReleaseEvent(self, event):
         self._pressed = False
         self._cpos = None
+
+    def setMenuBar(self, menubar):
+        """Set the menu bar in the title bar."""
+        self.menuBar = menubar
+        self.layout.insertWidget(1, menubar)

@@ -1,13 +1,13 @@
 import os
-from QtFrameless.qt_api import (
+from .qt_api import (
     QApplication,
     QMainWindow,
     QVBoxLayout,
     QWidget,
     Qt
 )
-from QtFrameless.titleBar import TitleBar
-from QtFrameless.style import stylesheet
+from .titleBar import TitleBar
+from .style import stylesheet
 
 
 class FramelessWindow(QMainWindow):
@@ -94,6 +94,10 @@ class FramelessWindow(QMainWindow):
     def _titlebar_mouseReleaseEvent(self, event):
         self._pressed = False
         self._cpos = None
+
+    def setMenuBar(self, menubar):
+        """Add a menubar to the titleBar."""
+        self.titleBar.setMenuBar(menubar)
 
 
 def execute():

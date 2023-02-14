@@ -12,4 +12,4 @@ push: clean ## upload changes to github repo
 
 release: clean ## release version to pypi
 	python -m build
-	twine upload dist\*
+	twine upload dist/*
